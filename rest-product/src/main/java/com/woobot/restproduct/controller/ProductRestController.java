@@ -42,9 +42,9 @@ public class ProductRestController {
         if (bindingResult.hasErrors()) {
             // BindException extends BindingResult
             if (bindingResult instanceof BindException exception) {
-                throw exception;
+                throw exception; // if its BadRequestException, we just throw it, cuz we have BadRequestControllerAdvice
             } else {
-                throw new BindException(bindingResult);
+                throw new BindException(bindingResult); // in other case we just create new instance of error and throw it
             }
         } else {
             this.productService.updateProduct(productId, payload.title(), payload.details());
@@ -53,13 +53,14 @@ public class ProductRestController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteProdcut(@PathVariable("productId") int productId) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable("productId") int productId) {
         this.productService.deleteProduct(productId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); // build are finishing ResponseEntity building and returns it
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ProblemDetail> handleNoSuchElementException(NoSuchElementException exception, Locale locale) {
+        // here body returns ResponseEntity instead of build as in prev method
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
                                 this.messageSource.getMessage(exception.getMessage(), new Object[0],

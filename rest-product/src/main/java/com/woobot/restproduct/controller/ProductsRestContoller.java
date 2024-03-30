@@ -12,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
 import java.util.Map;
 
 // RestController is analogue of Controller annotation, but methods ot its class automatically becomes @ResponseBody
@@ -25,10 +24,10 @@ public class ProductsRestContoller {
     private final ProductService productService;
 
     @GetMapping
-    public List<Product> findProducts() {
+    public Iterable<Product> findProducts(@RequestParam(name = "filter", required = false) String filter) {
         // Here we use product, but it will be more correct to use different classes for response, db and for logic
         // because for these purposes we might need different objects with different props
-        return this.productService.findAllProducts();
+        return this.productService.findAllProducts(filter);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // by default
