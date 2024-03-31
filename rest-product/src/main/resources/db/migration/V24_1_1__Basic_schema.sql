@@ -5,7 +5,7 @@ create schema if not exists catalogue;
 -- c in c_title and c_details means, that its not foreign key
 create table catalogue.t_product(
     id serial primary key,
-    c_title varchar(50) not null check(length(trim(c_title)) >= 3), -- check if string has more than 3 non-space symblos
+    c_title varchar(50) not null check(length(trim(c_title)) >= 3), -- check if string has more than 3 non-space symbols
     c_details varchar(1000)
 );
 

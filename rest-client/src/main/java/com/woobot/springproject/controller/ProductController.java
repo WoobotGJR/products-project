@@ -9,10 +9,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
@@ -31,15 +34,15 @@ public class ProductController {
     }
 
     // we can define what product id is with regEx
-    @GetMapping
-    public String getProduct() {
+    @GetMapping // with Principal principal we can get info about user
+    public String getProduct(Principal principal) {
         // orElseThrow added to make returning product optional, cuz it might be null
 //        model.addAttribute("product", this.productService.findProduct(productId).orElseThrow());
         return "catalogue/products/product";
     }
 
-    @GetMapping("edit")
-    public String getProductEditPage() {
+    @GetMapping("edit") // with @AuthenticationPrincipal UserDetails userDetails we can get info about user
+    public String getProductEditPage(@AuthenticationPrincipal UserDetails userDetails) {
 //        model.addAttribute("product", this.productService.findProduct(productId).orElseThrow()); // created upper in ModelAttribute once for all routes
         return "catalogue/products/edit";
     }
