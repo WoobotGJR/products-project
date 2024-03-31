@@ -12,6 +12,8 @@ public class SecurityBeans {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .csrf()
+                .disable()
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests.requestMatchers("/catalogue-api/**")
                                 .hasRole("SERVICE")) // equivalent to .hasAuthority("ROLE_SERVICE")
