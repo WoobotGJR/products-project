@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
@@ -48,11 +49,13 @@ public class ProductController {
     @PostMapping("edit")
     public String updateProduct(@ModelAttribute(value = "product", binding = false) Product product,
                                 UpdateProductPayload payload,
-                                Model model) {
+                                Model model,
+                                HttpServletResponse response) {
         try {
             this.productsRestClient.updateProduct(product.id(), payload.title(), payload.details());
             return "redirect:/catalogue/products/%d".formatted(product.id());
         } catch (BadRequestException exception) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             model.addAttribute("payload", payload);
             model.addAttribute("errors", exception.getErrors());
 
