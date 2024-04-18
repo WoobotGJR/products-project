@@ -7,16 +7,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="spring-project" />
+        <module name="customer-app" />
         <module name="rest-product" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="spring-project" target="21" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="customer-app" options="-parameters" />
       <module name="rest-product" options="-parameters" />
+      <module name="rest-service" options="-parameters" />
       <module name="spring-project" options="-parameters" />
     </option>
   </component>
