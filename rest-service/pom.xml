@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.woobot</groupId>
-	<artifactId>rest-product</artifactId>
+	<artifactId>rest-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>rest-product</name>
 	<description>Demo project for Spring Boot</description>
