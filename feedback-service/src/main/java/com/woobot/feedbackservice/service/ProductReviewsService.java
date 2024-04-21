@@ -1,6 +1,6 @@
-package com.woobot.customerapp.service;
+package com.woobot.feedbackservice.service;
 
-import com.woobot.customerapp.entity.ProductReview;
+import com.woobot.feedbackservice.entity.ProductReview;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

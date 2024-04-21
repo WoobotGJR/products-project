@@ -1,8 +1,8 @@
 package com.woobot.customerapp.controller;
 
+import com.woobot.customerapp.client.FavouriteProductsClient;
 import com.woobot.customerapp.client.ProductsRestClient;
 import com.woobot.customerapp.entity.FavouriteProduct;
-import com.woobot.customerapp.service.FavouriteProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +18,7 @@ public class ProductsController {
 
     private final ProductsRestClient productsRestClient;
 
-    private final FavouriteProductService favouriteProductService;
+    private final FavouriteProductsClient favouriteProductsClient;
 
     @GetMapping("list")
     public Mono<String> getProductsListPage(Model model,
@@ -34,8 +34,8 @@ public class ProductsController {
     public Mono<String> getFavouriteProductsListPage(Model model,
                                             @RequestParam(name = "filter", required = false) String filter) {
         model.addAttribute("filter", filter);
-        return this.favouriteProductService.findFavouriteProducts()
-                .map(FavouriteProduct::getProductId)
+        return this.favouriteProductsClient.findFavouriteProducts()
+                .map(FavouriteProduct::productId)
                 .collectList()
                 .flatMap(favouriteProducts -> this.productsRestClient.findAllProducts(filter)
                         .filter(product -> favouriteProducts.contains(product.id()))

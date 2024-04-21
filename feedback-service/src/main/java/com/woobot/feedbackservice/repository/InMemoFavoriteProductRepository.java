@@ -1,6 +1,6 @@
-package com.woobot.customerapp.repository;
+package com.woobot.feedbackservice.repository;
 
-import com.woobot.customerapp.entity.FavouriteProduct;
+import com.woobot.feedbackservice.entity.FavouriteProduct;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

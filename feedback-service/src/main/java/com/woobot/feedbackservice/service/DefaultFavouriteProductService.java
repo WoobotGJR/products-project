@@ -1,7 +1,7 @@
-package com.woobot.customerapp.service;
+package com.woobot.feedbackservice.service;
 
-import com.woobot.customerapp.entity.FavouriteProduct;
-import com.woobot.customerapp.repository.FavoriteProductRepository;
+import com.woobot.feedbackservice.entity.FavouriteProduct;
+import com.woobot.feedbackservice.repository.FavoriteProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
