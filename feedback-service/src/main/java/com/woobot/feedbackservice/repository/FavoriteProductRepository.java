@@ -1,15 +1,13 @@
 package com.woobot.feedbackservice.repository;
 
 import com.woobot.feedbackservice.entity.FavouriteProduct;
-import reactor.core.publisher.Flux;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
-public interface FavoriteProductRepository {
+import java.util.UUID;
+
+public interface FavoriteProductRepository extends ReactiveCrudRepository<FavouriteProduct, UUID> {
     Mono<Void> deleteByProductId(int productId);
 
-    Mono<FavouriteProduct> save(FavouriteProduct favoriteProduct);
-
     Mono<FavouriteProduct> findByProductId(int productId);
-
-    Flux<FavouriteProduct> findAll();
 }
