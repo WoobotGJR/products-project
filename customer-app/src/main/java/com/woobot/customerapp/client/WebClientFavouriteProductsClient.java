@@ -50,7 +50,7 @@ public class WebClientFavouriteProductsClient implements FavouriteProductsClient
                                     }
                                 }
                             }
-                            return new ClientBadRequestException(exception, errors);
+                            return new ClientBadRequestException("Error in adding product in favourites", exception, errors);
                         });
     }
 

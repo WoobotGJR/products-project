@@ -49,7 +49,7 @@ public class WebClientProductReviewsClient implements ProductReviewsClient {
                                     }
                                 }
                             }
-                            return new ClientBadRequestException(exception, errors);
+                            return new ClientBadRequestException("Error in product review creating", exception, errors);
                         });
     }
 }
