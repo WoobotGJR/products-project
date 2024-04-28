@@ -1,7 +1,7 @@
 package com.woobot.feedbackservice.service;
 
 import com.woobot.feedbackservice.entity.FavouriteProduct;
-import com.woobot.feedbackservice.repository.FavoriteProductRepository;
+import com.woobot.feedbackservice.repository.FavouriteProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class DefaultFavouriteProductService implements FavouriteProductService {
-    private final FavoriteProductRepository favoriteProductRepository;
+    private final FavouriteProductRepository favoriteProductRepository;
 
     @Override
     public Mono<FavouriteProduct> addProductToFavourites(int productId, String userId) {

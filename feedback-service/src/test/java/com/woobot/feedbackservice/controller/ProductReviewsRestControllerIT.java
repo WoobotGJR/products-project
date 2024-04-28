@@ -18,6 +18,11 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 
@@ -146,7 +151,26 @@ class ProductReviewsRestControllerIT {
                                 "userId": "user-tester"
                             }
                         """)
-                .jsonPath("$.id").exists();
+                .jsonPath("$.id").exists()
+                .consumeWith(document("feedback/product_reviews/create_product_review",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("productId").type("int").description("Product ID"),
+                                fieldWithPath("rating").type("string").description("Product rating"),
+                                fieldWithPath("review").type("string").description("Product review")
+                        ),
+                        responseFields(
+                                fieldWithPath("productId").type("int").description("Product ID"),
+                                fieldWithPath("rating").type("string").description("Product rating"),
+                                fieldWithPath("id").type("uuid").description("Review ID"),
+                                fieldWithPath("userId").type("string").description("User ID"),
+                                fieldWithPath("review").type("string").description("Product review")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.LOCATION).description("Link to created review")
+                        )
+                        ));
     }
 
     @Test

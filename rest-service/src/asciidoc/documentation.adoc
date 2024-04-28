@@ -1,0 +1,13 @@
+= Rest API catalogue doc
+
+:toc: right
+
+== REST API product
+
+=== Getting product
+
+.Response body
+include::{snippets}/catalogue/products/find_all/response-body.adoc
+
+.Response props
+include::{snippets}/catalogue/products/find_all/response-fields.adoc

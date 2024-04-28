@@ -3,6 +3,13 @@ package com.woobot.restproduct.controller;
 import com.woobot.restproduct.controller.payload.NewProductPayload;
 import com.woobot.restproduct.entity.Product;
 import com.woobot.restproduct.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -30,6 +37,36 @@ public class ProductsRestController {
         return this.productService.findAllProducts(filter);
     }
 
+    @Operation(
+            security = @SecurityRequirement(name = "keycloak"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    type = "object",
+                                    properties = {
+                                            @StringToClassMapItem(key = "title", value = String.class),
+                                            @StringToClassMapItem(key = "details", value = String.class)
+                                    }
+                            )
+                    )
+            ),
+            responses = {
+            @ApiResponse(responseCode = "201",
+                    headers = @Header(name = "Content-Type", description = "Data type"),
+                    content = {
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(
+                                    type = "object",
+                                    properties = {
+                                            @StringToClassMapItem(key = "id", value = Integer.class),
+                                            @StringToClassMapItem(key = "title", value = String.class),
+                                            @StringToClassMapItem(key = "details", value = String.class)
+                                    }
+                            ))
+                    })
+    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // by default
     public ResponseEntity<?> createProduct(@Valid @RequestBody NewProductPayload payload,
                                            BindingResult bindingResult,

@@ -3,6 +3,8 @@ package com.woobot.feedbackservice.controller;
 import com.woobot.feedbackservice.controller.payload.NewProductReviewPayload;
 import com.woobot.feedbackservice.entity.ProductReview;
 import com.woobot.feedbackservice.service.ProductReviewsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ public class ProductReviewsRestController {
     private final ProductReviewsService productReviewsService;
 
     @GetMapping("by-product-id/{productId:\\d+}") // or ?productId={productId}
+    @Operation(
+            security = @SecurityRequirement(name = "keycloak")
+    )
     public Flux<ProductReview> findProductReviewsByProductId(@PathVariable("productId") int productId) {
         return this.productReviewsService.findProductReviewsByProduct(productId);
     }

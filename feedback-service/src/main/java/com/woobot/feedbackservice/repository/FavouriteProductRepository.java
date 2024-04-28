@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-public interface FavoriteProductRepository extends ReactiveCrudRepository<FavouriteProduct, UUID> {
+public interface FavouriteProductRepository extends ReactiveCrudRepository<FavouriteProduct, UUID> {
 
 
     Flux<FavouriteProduct> findAllByUserId(String userId);
