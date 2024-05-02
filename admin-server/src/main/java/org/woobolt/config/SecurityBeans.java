@@ -3,6 +3,7 @@ package org.woobolt.config;
 import jakarta.annotation.Priority;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -35,10 +36,17 @@ public class SecurityBeans {
     @Priority(0)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher(request -> Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
-                        .map(header -> header.startsWith("Bearer: ")).orElse(false))
+                .securityMatchers(requestMatcherConfigurer -> requestMatcherConfigurer
+                        .requestMatchers(HttpMethod.POST, "/instances")
+                        .requestMatchers(HttpMethod.DELETE, "/instances/*")
+                        .requestMatchers("/actuator/**"))
                 .oauth2ResourceServer(customizer -> customizer.jwt(Customizer.withDefaults()))
-                .authorizeHttpRequests(customizer -> customizer.anyRequest().hasAuthority("SCOPE_metrics_server"))
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+                        authorizationManagerRequestMatcherRegistry
+                                .requestMatchers("/instances", "/instances/*")
+                                .hasAuthority("SCOPE_metrics_server")
+                                .requestMatchers("/actuator/**").hasAuthority("SCOPE_metrics")
+                                .anyRequest().denyAll())
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(CsrfConfigurer::disable)
                 .build();

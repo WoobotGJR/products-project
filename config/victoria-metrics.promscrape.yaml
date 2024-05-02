@@ -1,0 +1,71 @@
+scrape_configs:
+  - job_name: products_admin_service
+    static_configs:
+      - targets: ["http://172.17.0.1:8085"]
+        labels:
+          application: products-admin-service
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: vTpeB59Sb2Qzh0HI4cXBlewm2ivY0dzD
+      token_url: http://172.17.0.1:8082/realms/products/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+  - job_name: products_catalogue_service
+    static_configs:
+      - targets: ["http://172.17.0.1:8081"]
+        labels:
+          application: products-catalogue-service
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: vTpeB59Sb2Qzh0HI4cXBlewm2ivY0dzD
+      token_url: http://172.17.0.1:8082/realms/products/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+  - job_name: products_feedback_service
+    static_configs:
+      - targets: ["http://172.17.0.1:8084"]
+        labels:
+          application: products-feedback-service
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: vTpeB59Sb2Qzh0HI4cXBlewm2ivY0dzD
+      token_url: http://172.17.0.1:8082/realms/products/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+  - job_name: products_customer_app
+    static_configs:
+      - targets: ["http://172.17.0.1:8083"]
+        labels:
+          application: products-customer-app
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: vTpeB59Sb2Qzh0HI4cXBlewm2ivY0dzD
+      token_url: http://172.17.0.1:8082/realms/products/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+  - job_name: products_manager_app
+    static_configs:
+      - targets: ["http://172.17.0.1:8080"]
+        labels:
+          application: products-manager-app
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: vTpeB59Sb2Qzh0HI4cXBlewm2ivY0dzD
+      token_url: http://172.17.0.1:8082/realms/products/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
