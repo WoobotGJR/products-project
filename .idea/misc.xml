@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/manager-app/pom.xml" />
         <option value="$PROJECT_DIR$/feedback-service/pom.xml" />
         <option value="$PROJECT_DIR$/admin-server/pom.xml" />
+        <option value="$PROJECT_DIR$/eureka-server/pom.xml" />
       </list>
     </option>
   </component>

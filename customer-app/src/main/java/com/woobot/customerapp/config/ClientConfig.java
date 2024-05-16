@@ -9,6 +9,8 @@ import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -22,20 +24,49 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ClientConfig {
-    @Bean
-    @Scope("prototype")
-    public WebClient.Builder productsServicesWebClientBuilder(
-            ReactiveClientRegistrationRepository clientRegistrationRepository,
-            ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
-            ObservationRegistry observationRegistry
-    ) {
-        var filter = new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrationRepository,
-                authorizedClientRepository);
-        filter.setDefaultClientRegistrationId("keycloak");
-        return WebClient.builder()
-                .observationRegistry(observationRegistry)
-                .observationConvention(new DefaultClientRequestObservationConvention())
-                .filter(filter);
+    @Configuration
+    @ConditionalOnProperty(name = "eureka.client.enabled", havingValue = "false") // config for standalone
+    public static class StandaloneClientConfig {
+
+        @Bean
+        @Scope("prototype")
+        public WebClient.Builder selmagServicesWebClientBuilder(
+                ReactiveClientRegistrationRepository clientRegistrationRepository,
+                ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
+                ObservationRegistry observationRegistry
+        ) {
+            ServerOAuth2AuthorizedClientExchangeFilterFunction filter =
+                    new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrationRepository,
+                            authorizedClientRepository);
+            filter.setDefaultClientRegistrationId("keycloak");
+            return WebClient.builder()
+                    .observationRegistry(observationRegistry)
+                    .observationConvention(new DefaultClientRequestObservationConvention())
+                    .filter(filter);
+        }
+    }
+
+    @Configuration
+    @ConditionalOnProperty(name = "eureka.client.enabled", havingValue = "true", matchIfMissing = true) // config for cloud
+    public static class CloudClientConfig {
+
+        @Bean
+        @LoadBalanced
+        @Scope("prototype")
+        public WebClient.Builder selmagServicesWebClientBuilder(
+                ReactiveClientRegistrationRepository clientRegistrationRepository,
+                ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
+                ObservationRegistry observationRegistry
+        ) {
+            ServerOAuth2AuthorizedClientExchangeFilterFunction filter =
+                    new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrationRepository,
+                            authorizedClientRepository);
+            filter.setDefaultClientRegistrationId("keycloak");
+            return WebClient.builder()
+                    .observationRegistry(observationRegistry)
+                    .observationConvention(new DefaultClientRequestObservationConvention())
+                    .filter(filter);
+        }
     }
 
     @Bean
@@ -51,20 +82,24 @@ public class ClientConfig {
     @Bean
     public WebClientFavouriteProductsClient webClientFavouriteProductsClient(
             WebClient.Builder productsServicesWebClientBuilder,
+            ReactorLoadBalancerExchangeFilterFunction reactorLoadBalancerExchangeFilterFunction,
             @Value("services.feedback.uri:http://localhost:8084") String feedbackBaseUri
             ) {
         return new WebClientFavouriteProductsClient(productsServicesWebClientBuilder
                 .baseUrl(feedbackBaseUri)
+                .filter(reactorLoadBalancerExchangeFilterFunction)
                 .build());
     }
 
     @Bean
     public WebClientProductReviewsClient webClientProductReviewsClient(
             WebClient.Builder productsServicesWebClientBuilder,
+            ReactorLoadBalancerExchangeFilterFunction reactorLoadBalancerExchangeFilterFunction,
             @Value("services.feedback.uri:http://localhost:8084") String feedbackBaseUri
             ) {
         return new WebClientProductReviewsClient(productsServicesWebClientBuilder
                 .baseUrl(feedbackBaseUri)
+                .filter(reactorLoadBalancerExchangeFilterFunction)
                 .build());
     }
 

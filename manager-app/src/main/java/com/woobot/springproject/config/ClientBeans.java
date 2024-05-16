@@ -7,6 +7,8 @@ import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration // methods of this class annotated with bean will be source of components to register them in app context
 public class ClientBeans {
-    @Bean // All beans should start with entity, that we return (RestClient here, for example) GraalVM
+    /*@Bean // All beans should start with entity, that we return (RestClient here, for example) GraalVM
     public RestClientProductsRestClient productsRestClient(
             @Value("${service.catalogue.uri:http://localhost:8081}") String catalogueBaseUri,
             ClientRegistrationRepository clientRegistrationRepository,
@@ -34,6 +36,49 @@ public class ClientBeans {
                         new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
                                 authorizedClientRepository), registrationId))
                 .build());
+    }*/
+
+    @Configuration
+    @ConditionalOnProperty(name = "eureka.client.enabled", havingValue = "false")
+    public static class StandaloneClientConfig {
+
+        @Bean
+        public RestClientProductsRestClient productsRestClient(
+                @Value("${selmag.services.catalogue.uri:http://localhost:8081}") String catalogueBaseUri,
+                ClientRegistrationRepository clientRegistrationRepository,
+                OAuth2AuthorizedClientRepository authorizedClientRepository,
+                @Value("${selmag.services.catalogue.registration-id:keycloak}") String registrationId) {
+            return new RestClientProductsRestClient(RestClient.builder()
+                    .baseUrl(catalogueBaseUri)
+                    .requestInterceptor(
+                            new OAuthClientHttpRequestInterceptor(
+                                    new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
+                                            authorizedClientRepository), registrationId))
+                    .build());
+        }
+    }
+
+
+    @Configuration
+    @ConditionalOnProperty(name = "eureka.client.enabled", havingValue = "true", matchIfMissing = true)
+    public static class CloudClientConfig {
+
+        @Bean
+        public RestClientProductsRestClient productsRestClient(
+                @Value("${selmag.services.catalogue.uri:http://localhost:8081}") String catalogueBaseUri,
+                ClientRegistrationRepository clientRegistrationRepository,
+                OAuth2AuthorizedClientRepository authorizedClientRepository,
+                @Value("${selmag.services.catalogue.registration-id:keycloak}") String registrationId,
+                LoadBalancerClient loadBalancerClient) {
+            return new RestClientProductsRestClient(RestClient.builder()
+                    .baseUrl(catalogueBaseUri)
+                    .requestInterceptor(new LoadBalancerInterceptor(loadBalancerClient))
+                    .requestInterceptor(
+                            new OAuthClientHttpRequestInterceptor(
+                                    new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
+                                            authorizedClientRepository), registrationId))
+                    .build());
+        }
     }
 
     @Bean

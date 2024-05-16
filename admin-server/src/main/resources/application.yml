@@ -31,3 +31,10 @@ management:
         include:
           - health
           - prometheus
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://172.17.0.1:8761/eureka/
+    register-with-eureka: false
